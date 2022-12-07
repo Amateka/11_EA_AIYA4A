@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace _11_EA_AIYA4A.Controllers
 {
     //[Route("api/[controller]")]
-    //[ApiController]
+    [ApiController]
     public class BoatController : ControllerBase
     {
         [HttpGet]
@@ -13,7 +13,7 @@ namespace _11_EA_AIYA4A.Controllers
         {
             Models.HajosContext hajosContext = new Models.HajosContext();
             var lisa = from x in hajosContext.Questions select x;
-            return Ok(lisa);
+            return new JsonResult(lisa);
         }
         [HttpGet]
         [Route("hajo/kerdesek/{id}")]
@@ -26,6 +26,19 @@ namespace _11_EA_AIYA4A.Controllers
             var lisa2 = hajosContext.Questions.Where( x => x.QuestionId == id );
 
             return Ok(lisa.FirstOrDefault());
+        }
+        [HttpGet]
+        [Route("questions/{sorszám}")]
+        public ActionResult M2(int sorszám)
+        {
+            Models.HajosContext context = new Models.HajosContext();
+            var kérdés = (from x in context.Questions
+                          where x.QuestionId == sorszám
+                          select x).FirstOrDefault();
+
+            if (kérdés == null) return BadRequest("Nincs ilyen sorszámú kérdés");
+
+            return new JsonResult(kérdés);
         }
     }
 }
